@@ -1,0 +1,165 @@
+<html>
+
+<head>
+    <title>Date?</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="date.css">
+</head>
+
+<body>
+
+    <main>
+
+        <section id="vraag">
+            <h1>Nog een date? ...</h1>
+            <p>Be Honest</p>
+
+            <button onclick="ja()">Tuurlijk!!</button>
+            <button id="nee">Ne, ew</button>
+        </section>
+
+        <section id="form">
+            <h1>Lesgoooo!</h1>
+            <p>ff snel details: </p>
+
+            <form id="dateform" action="https://formspree.io/f/maqzrbdp" method="POST">
+
+                <label>Naam van de date</label>
+                <input type="text" name="naam" required>
+
+                <label>Vanaf wanneer zou je kunnen?</label>
+                <input type="date" name="van" required>
+
+                <label>Tot wanner?</label>
+                <input type="date" name="tot" required>
+
+                <label>Welke periode van de dag?</label>
+
+                <div class="slider-box">
+
+                    <p><b>Start</b></p>
+                    <input type="range" id="start" min="0" max="3" value="0" oninput="tijd()">
+
+                    <p><b>Einde</b></p>
+                    <input type="range" id="eind" min="0" max="3" value="3" oninput="tijd()">
+
+                </div>
+
+                <p id="toon">Hele dag</p>
+                <input type="hidden" id="dag" name="dagperiode">
+
+                <label>Voorkeur avtiviteit?</label>
+                <select name="activiteit" id="activiteit" onchange="toonEten()" required>
+                    <option>Rondwandelen in de stad</option>
+                    <option>Zitten aan de kaaien</option>
+                    <option>Drankje pakken</option>
+                    <option>Film kijken</option>
+                    <option>Eten</option>
+                    <option>Anders (includeer in bericht onder)<option>
+                </select>
+
+                <div id="etenbox">
+                    <label>Wat wil je eten?</label>
+                    <select name="eten">
+                        <option>Sushi</option>
+                        <option>Fastfood</option>
+                        <option>Pizza</option>
+                        <option>Pasta</option>
+                        <option>Restaurant</option>
+                        <option>Anders (includeer in bericht onder)</option>
+                    </select>
+                </div>
+
+                <label>Bericht</label>
+                <textarea name="bericht" placeholder="Schrijf nodige details ... (of iets liefs)"></textarea>
+
+                <button type="submit">Ik wil op date!</button>
+
+                <p id="status"></p>
+
+            </form>
+        </section>
+
+    </main>
+
+    <script>
+        let nee = document.getElementById("nee");
+        let form = document.getElementById("dateform");
+
+        nee.addEventListener("mouseover", weg);
+        nee.addEventListener("click", weg);
+        nee.addEventListener("touchstart", weg);
+
+        function weg() {
+            let x = Math.random() * (window.innerWidth - 100);
+            let y = Math.random() * (window.innerHeight - 100);
+
+            nee.style.position = "absolute";
+            nee.style.left = x + "px";
+            nee.style.top = y + "px";
+        }
+
+        function ja() {
+            document.getElementById("vraag").style.display = "none";
+            document.getElementById("form").style.display = "block";
+        }
+
+        function tijd() {
+            let namen = ["Ochtend", "Middag", "Namiddag", "Avond"];
+
+            let a = Number(document.getElementById("start").value);
+            let b = Number(document.getElementById("eind").value);
+
+            if (a > b) {
+                let t = a;
+                a = b;
+                b = t;
+            }
+
+            let tekst;
+
+            if (a == 0 && b == 3) {
+                tekst = "Hele dag";
+            } else {
+                tekst = namen[a] + " - " + namen[b];
+            }
+
+            document.getElementById("toon").innerHTML = tekst;
+            document.getElementById("dag").value = tekst;
+        }
+
+        function toonEten() {
+            let keuze = document.getElementById("activiteit").value;
+
+            if (keuze == "Eten") {
+                document.getElementById("etenbox").style.display = "block";
+            } else {
+                document.getElementById("etenbox").style.display = "none";
+            }
+        }
+
+        form.addEventListener("submit", function (e) {
+            e.preventDefault();
+
+            document.getElementById("status").innerHTML = "Even versturen...";
+
+            let data = new FormData(form);
+
+            fetch(form.action, {
+                method: "POST",
+                body: data,
+                headers: {
+                    "Accept": "application/json"
+                }
+            }).then(function () {
+                window.location.href = "bedankt.html";
+            });
+        });
+
+        tijd();
+        toonEten();
+    </script>
+
+</body>
+
+</html>
